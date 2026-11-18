@@ -7,6 +7,9 @@ from werkzeug.security import check_password_hash
 from database import connect, init_db
 
 app = Flask(__name__)
+from xss_lab import xss_lab
+
+app.register_blueprint(xss_lab)
 app.config.update(SECRET_KEY=os.environ.get('VULNSCOPE_SECRET_KEY', secrets.token_hex(32)),
                   SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE='Lax')
 init_db()

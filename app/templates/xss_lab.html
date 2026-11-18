@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VulnScope | Reflected XSS Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='xss_lab.css') }}">
+</head>
+<body>
+  <main class="container">
+    <div class="eyebrow">VulnScope · Phase 2 · Local-only security lab</div>
+    <h1>Reflected XSS Lab</h1>
+    <p>This is a controlled demonstration. The unsafe version intentionally
+       outputs submitted text as HTML. The safe version escapes it.</p>
+
+    <nav aria-label="Lab versions">
+      <a href="{{ url_for('xss_lab.vulnerable', comment=comment) }}">Vulnerable version</a>
+      <a href="{{ url_for('xss_lab.safe', comment=comment) }}">Secure version</a>
+    </nav>
+
+    <p class="status">Current version:
+      <strong>{{ "VULNERABLE" if mode == "vulnerable" else "SECURE" }}</strong>
+    </p>
+
+    <form method="get">
+      <label for="comment">Comment preview (maximum 300 characters)</label>
+      <textarea id="comment" name="comment" maxlength="300" rows="4"
+                placeholder="Try: Hello VulnScope!">{{ comment }}</textarea>
+      <button type="submit">Preview comment</button>
+    </form>
+
+    <h2>Rendered preview</h2>
+    <section class="preview" id="preview" aria-label="Comment preview">
+      {% if comment %}
+        {% if mode == "vulnerable" %}
+          {# Intentionally insecure: bypasses automatic HTML escaping #}
+          {{ comment | safe }}
+        {% else %}
+          {# Safe: Jinja HTML autoescaping stays enabled #}
+          {{ comment }}
+        {% endif %}
+      {% else %}
+        <em>Submit a comment to preview it here.</em>
+      {% endif %}
+    </section>
+    <p class="note">Use this lab only at http://127.0.0.1:5000.</p>
+  </main>
+</body>
+</html>

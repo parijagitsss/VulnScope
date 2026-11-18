@@ -1,0 +1,33 @@
+venv/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.db
+.env
+reports/*.json
+reports/*.html
+
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Local security evidence
+reports/*-evidence.png
+reports/*-evidence.jpg
+
+# Development tools
+.vscode/
+.pytest_cache/

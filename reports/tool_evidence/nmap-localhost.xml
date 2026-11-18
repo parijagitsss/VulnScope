@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.99 scan initiated Thu Nov 19 00:40:53 2026 as: /usr/lib/nmap/nmap -&#45;privileged -sV -p 5000 -oX /home/parija/nmap-localhost.xml 127.0.0.1 -->
+<nmaprun scanner="nmap" args="/usr/lib/nmap/nmap -&#45;privileged -sV -p 5000 -oX /home/parija/nmap-localhost.xml 127.0.0.1" start="1795029053" startstr="Thu Nov 19 00:40:53 2026" version="7.99" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1" services="5000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1795029053" endtime="1795029059"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<address addr="127.0.0.1" addrtype="ipv4"/>
+<hostnames>
+<hostname name="localhost" type="PTR"/>
+</hostnames>
+<ports><port protocol="tcp" portid="5000"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Werkzeug httpd" version="3.1.9" extrainfo="Python 3.13.14" method="probed" conf="10"><cpe>cpe:/a:python:python:3.13.14</cpe></service></port>
+</ports>
+<times srtt="1491" rttvar="5000" to="100000"/>
+</host>
+<runstats><finished time="1795029059" timestr="Thu Nov 19 00:40:59 2026" summary="Nmap done at Thu Nov 19 00:40:59 2026; 1 IP address (1 host up) scanned in 6.68 seconds" elapsed="6.68" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -7,6 +7,10 @@ from werkzeug.security import check_password_hash
 from database import connect, init_db
 
 app = Flask(__name__)
+from idor_lab import idor_lab
+app.register_blueprint(idor_lab)
+from csrf_lab import csrf_lab
+app.register_blueprint(csrf_lab)
 from xss_lab import xss_lab
 
 app.register_blueprint(xss_lab)
@@ -39,6 +43,17 @@ app.jinja_env.globals['csrf_token'] = csrf_token
 
 @app.before_request
 def verify_csrf():
+
+    # CSRF training lab: use its own validation
+    if (
+        request.endpoint in {
+            "csrf_lab.vulnerable",
+            "csrf_lab.safe"
+        }
+        and request.remote_addr in {"127.0.0.1", "::1"}
+    ):
+        return None
+
     if request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
         token = request.form.get('_csrf_token', '')
         if not secrets.compare_digest(token, session.get('_csrf_token', '')) or not token:

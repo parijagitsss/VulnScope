@@ -1,3 +1,6 @@
+# VulnScope
+Automated Web Application VAPT &amp; Security Assessment
+
 # VulnScope — Phase 1
 
 A local-only Flask and SQLite security assessment training application.

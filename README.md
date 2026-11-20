@@ -1,159 +1,213 @@
 # VulnScope
+### Automated Web Application VAPT & Security Assessment
 
-### Automated Web Application VAPT & Security Assessment — Local Training Lab
+**A hands-on cybersecurity project demonstrating vulnerability assessment, penetration testing, source-code remediation, and security validation on a fictional employee portal.**
 
-**Python · Flask · SQLite · HTML/CSS/JavaScript · Burp Suite · OWASP ZAP · Nmap**
+VulnScope is a Flask-based web application developed as a controlled environment for learning and demonstrating the complete web application penetration-testing lifecycle.
 
-VulnScope is a hands-on web application security project that combines an intentionally vulnerable Flask application with **repeatable security checks**, **secure-versus-vulnerable comparisons**, and **evidence-led reporting**. I developed the application and tested its local training endpoints using Python automation and security tools on Kali Linux.
+Instead of testing isolated vulnerability demonstration pages, the assessment focuses on a single functional employee portal with realistic features, including authentication, an employee directory, support tickets, and account settings.
 
-> [!WARNING]
-> **Educational use only.** The app intentionally contains vulnerabilities. Run it exclusively on `127.0.0.1` or an isolated, authorized lab. Do not expose it to the internet or use it to test systems without permission. All demonstration accounts and records are synthetic.
+The project covers the process of identifying security weaknesses, reproducing them, implementing fixes, and validating the results using both manual and automated security testing.
 
-## Project highlights
+> **Security notice:** This is an authorized, self-hosted educational lab using fictional data. It is not intended for public deployment or production use.
 
-- Built a Flask application with SQLite-backed demo accounts, login, dashboard, and training routes.
-- Implemented **five intentionally vulnerable labs** alongside more secure implementations for comparison.
-- Created Python checks for the expected unsafe-versus-protected behavior of each lab.
-- Used **Burp Suite Repeater** to inspect and verify SQL injection requests manually.
-- Used **Nmap** to identify the local HTTP service (`127.0.0.1:5000`, Werkzeug).
-- Used **OWASP ZAP** for passive HTTP security review; imported alerts are treated as *unverified* until reviewed.
-- Generated HTML and JSON assessment outputs with documented findings, impact, and remediation.
+---
 
-## Vulnerability labs
+## Project Overview
 
-| Finding | Category | Deliberately vulnerable behavior | Protected comparison |
-| --- | --- | --- | --- |
-| VS-001 | SQL Injection · CWE-89 | Tautology input returns all three fictional user records | Parameterized query treats the input as data |
-| VS-002 | Reflected XSS · CWE-79 | Untrusted markup is reflected without proper escaping | Output is HTML-escaped |
-| VS-003 | CSRF · CWE-352 | Dummy profile accepts an update without validating a CSRF token | Session-bound token required |
-| VS-004 | IDOR · CWE-639 | Fictional user Alice can view Bob's profile by changing an ID | Server-side ownership check denies access |
-| VS-005 | Missing Login Rate Limiting · CWE-307 | Demo login allows repeated invalid attempts | Demo login rate-limits attempts with HTTP 429 |
+The VulnScope workflow consists of four main phases:
 
-**Scope:** These results refer to deliberately vulnerable **local lab endpoints**, not vulnerabilities discovered in a third-party or production site. Severity labels in the reports are illustrative unless separately scored. A report's “verified” label reflects the status recorded in the project's findings file; the report generator itself does not independently confirm exploitability.
+1. **Application Exploration** — Browse the employee portal and identify its features and attack surface.
+2. **Vulnerability Assessment** — Inspect HTTP requests, test input handling, and evaluate access controls.
+3. **Security Remediation** — Implement targeted fixes in the same application's source code.
+4. **Verification and Reporting** — Repeat the original tests, review automated results, and document the findings.
 
-## How the project works
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Backend | Python, Flask |
+| Database | SQLite |
+| Frontend | HTML, CSS, Jinja2 |
+| Testing environment | Kali Linux, VirtualBox |
+| Network scanning | Nmap |
+| HTTP security testing | Burp Suite |
+| Web security assessment | OWASP ZAP |
+| Automated testing | Python assessment scripts |
+| Version control | Git and GitHub |
+
+## Application Features
+
+The employee portal provides a realistic environment for testing:
+
+- **Authentication:** Employee login and session management
+- **Dashboard:** Employee portal overview
+- **Employee Directory:** Search for fictional employee profiles
+- **Support Tickets:** View and comment on support requests
+- **Account Settings:** Update profile information
+
+Security testing was performed against these existing features, rather than separate vulnerable and secure demonstration pages.
+
+## Vulnerabilities Tested
+
+Five security categories were investigated during the assessment:
+
+| Finding | Vulnerability | Remediation | Post-fix test |
+|---|---|---|---|
+| VS-001 | SQL Injection | Parameterized SQL queries | Not reproduced |
+| VS-002 | Stored Cross-Site Scripting | HTML output escaping | Not reproduced |
+| VS-003 | Cross-Site Request Forgery | Session-bound CSRF token validation | Tokenless request rejected |
+| VS-004 | Insecure Direct Object Reference | Server-side ownership validation | Unauthorized access blocked |
+| VS-005 | Insufficient Login Rate Limiting | Failed-login throttling | HTTP 429 observed |
+
+These results describe the specific test cases performed and do not guarantee that the application is free from all vulnerabilities.
+
+## Before and After Remediation
+
+### SQL Injection — Employee Directory
+
+**Before remediation:** An injection payload caused the directory search to return unintended employee records.
+
+![SQL Injection before remediation](docs/screenshots/sql_injection_before.png)
+
+**After remediation:** A parameterized query prevented the original payload from manipulating the SQL statement.
+
+![SQL Injection after remediation](docs/screenshots/sql_injection_after.png)
+
+### IDOR — Support Tickets
+
+**Before remediation:** Alice could access another fictional employee's private ticket.
+
+![IDOR before remediation](docs/screenshots/idor_before.png)
+
+**After remediation:** Server-side authorization blocked unauthorized ticket access.
+
+![IDOR after remediation](docs/screenshots/idor_after.png)
+
+### Additional Evidence
+
+The complete assessment also contains before-and-after evidence for Stored XSS, CSRF, and authentication rate limiting.
+
+**[Read the full VAPT Assessment Report](docs/VAPT_REPORT.md)**
+
+## Security Tools and Validation
+
+### Nmap
+
+Used for network service discovery against the application running on TCP port 5000 within the isolated VirtualBox lab network.
+
+![Nmap service discovery](docs/screenshots/nmap-scan.jpeg)
+
+### Burp Suite
+
+Used to inspect authenticated HTTP traffic and replay requests to validate SQL injection and authorization remediations.
+
+![Burp Suite IDOR validation](docs/screenshots/burp-idor.jpeg)
+
+### OWASP ZAP
+
+Used for passive web application security assessment.
+
+ZAP identified additional observations, including missing Content Security Policy and anti-clickjacking headers, an absent `X-Content-Type-Options` header, and server version information disclosure.
+
+These are documented as further hardening opportunities rather than being incorrectly marked as fixed.
+
+![OWASP ZAP alerts](docs/screenshots/zap-alerts.jpeg)
+
+### Automated Vulnerability Assessment
+
+The project's automated assessment reported that the five previously tested weaknesses were not reproduced after remediation.
+
+![Automated assessment results](docs/screenshots/assessment-results1.png)
+
+## Project Structure
 
 ```text
-VulnScope Flask application (localhost:5000)
-    ├── Login, dashboard & synthetic accounts
-    ├── Intentionally vulnerable lab endpoints
-    └── Protected comparison endpoints
-                     │
-                     ▼
-       Python verification scripts
-       ├── SQLi / XSS / CSRF
-       ├── IDOR / Authentication
-       └── Results (HTML + JSON)
-                     │
-                     ▼
-         Supporting manual evidence
-       ├── Burp Suite: HTTP requests
-       ├── Nmap: local service discovery
-       └── ZAP: passive alerts for review
-                     │
-                     ▼
-           Final VAPT HTML report
+VulnScope/
+├── app/                 # Flask employee portal
+├── scanner/             # Automated security assessment
+├── tests/               # Application and security tests
+├── tools/               # Project utilities
+├── docs/
+│   ├── VAPT_REPORT.md   # Detailed assessment report
+│   └── screenshots/     # Selected evidence
+├── reports/             # Local assessment outputs
+├── requirements.txt
+├── reset_demo.py
+├── START_PORTAL_WINDOWS.bat
+└── README.md
 ```
 
-## Technology stack
+## ## Running the Project
 
-| Area | Tools |
-| --- | --- |
-| Application | Python, Flask, Jinja, SQLite |
-| UI | HTML, CSS, JavaScript |
-| Automated checks | Python, `requests` |
-| Manual web testing | Burp Suite Community Edition |
-| Passive web scanning | OWASP ZAP |
-| Service discovery | Nmap |
-| Reports | HTML, JSON, Python report generators |
-| Development | VS Code on Windows, Kali Linux in VirtualBox, Git/GitHub |
+### Requirements
 
-## Run locally (Windows)
+- Windows 10 or 11
+- Python 3
+- Git (optional, for cloning)
 
-**Prerequisites:** Python, Git, PowerShell.
+### Installation
+
+**1. Clone the repository**
 
 ```powershell
 git clone https://github.com/parijagitsss/VulnScope.git
 cd VulnScope
-py -m venv venv
-.\venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
 ```
 
-If the requirements file does not include `requests`, install it in the same environment with `python -m pip install requests`.
-
-Generate a temporary local session secret and run Flask:
+**2. Start the application**
 
 ```powershell
-$env:VULNSCOPE_SECRET_KEY = python -c "import secrets; print(secrets.token_hex(32))"
-python .\app\app.py
+.\START_PORTAL_WINDOWS.bat
 ```
 
-Open **http://127.0.0.1:5000**. Keep Flask bound to loopback; do not run this intentionally vulnerable app on a public network interface.
+The startup script automatically creates a Python virtual environment and installs the required dependencies.
 
-## Run automated lab checks
+**3. Open the employee portal**
 
-With Flask running, open a **second** PowerShell terminal in the project root and activate the environment:
+Visit:
 
-```powershell
-.\venv\Scripts\Activate.ps1
-python .\scanner\run_assessment.py
-```
+http://127.0.0.1:5000/login
 
-The local assessment runs the five known VulnScope lab comparisons and writes:
+The application automatically creates its SQLite database and initializes fictional employee accounts, directory records, and support tickets when first launched.
 
-- [`reports/vulnscope_assessment.html`](reports/vulnscope_assessment.html) — automated comparison dashboard
-- [`reports/vulnscope_assessment.json`](reports/vulnscope_assessment.json) — machine-readable assessment results
+Test accounts are defined in `app/database.py` and are intended only for this local training environment.
 
-These scripts test **fixed, local training endpoints**; this is not an unrestricted internet vulnerability scanner. The XSS HTTP test checks reflected/escaped markup; browser JavaScript execution was checked separately. A `needs_review` result is inconclusive, not proof of security.
+**4. Stop the application**
 
-## Generate the final VAPT report
+Press `Ctrl + C` in the terminal running Flask.
 
-The final report combines recorded lab findings and optional, previously collected tool evidence. It **does not perform a new scan**.
+### Security Notice
 
-```powershell
-python .\tools\build_final_report.py
-start .\reports\final_vapt_report.html
-```
+VulnScope runs on `127.0.0.1` by default. It is an educational security-testing project and must not be exposed directly to the public internet.
+## Assessment Limitations
 
-- **[Final VAPT report — HTML file](reports/final_vapt_report.html)** (download and open in a browser to view the styled report)
-- **[Final report summary — JSON](reports/final_vapt_summary.json)**
-- **[Recorded findings](reports/findings.json)**
+- Testing was performed in an authorized local laboratory.
+- The application uses fictional employee information.
+- The initial authentication assessment involved four failed login attempts, not exhaustive password-guessing testing.
+- The CSRF proof of concept demonstrated a successful same-site, cross-origin profile modification; it did not establish exploitation from an unrelated external website.
+- The demonstrated in-memory login rate limiter is not a production-ready distributed protection mechanism.
+- Automated assessment results apply only to the tested cases.
+- Additional ZAP security-hardening observations remain for future review.
 
-Nmap XML and ZAP JSON can optionally be imported from `reports/tool_evidence/` after inspection. An open Nmap port is **not** automatically a security flaw, and passive ZAP alerts are **candidate findings**, not validated vulnerabilities.
+## Documentation
 
-## Testing workflow (Kali Linux)
+**[Full VAPT Assessment Report](docs/VAPT_REPORT.md)** — Findings, testing methodology, evidence, remediation steps, retest outcomes, and remaining recommendations.
 
-For manual verification, the repository can be cloned into Kali and Flask run there, keeping the target at `127.0.0.1`. Windows localhost and Kali VM localhost are different hosts, so the application and the testing tools were run together inside Kali for this part of the project.
+## Key Learning Outcomes
 
-- **Nmap:** identified the local Flask HTTP service on TCP port 5000.
-- **Burp Suite:** captured local HTTP traffic and compared normal, injected, and parameterized SQL requests in Repeater.
-- **OWASP ZAP:** browsed the application through the proxy and reviewed passive alerts, which are not automatically added as confirmed vulnerabilities.
+Through this project, I gained practical experience in:
 
-## Project layout
+- Exploring and assessing a functional web application
+- Analyzing HTTP requests and responses
+- Identifying common OWASP web security weaknesses
+- Creating controlled proof-of-concept tests
+- Implementing SQL injection, XSS, CSRF, and authorization remediations
+- Adding and validating authentication throttling
+- Testing with Nmap, Burp Suite, and OWASP ZAP
+- Performing post-remediation regression tests
+- Preparing a structured penetration-testing assessment report
 
-```text
-VulnScope/
-├── app/                # Flask app, database, HTML templates and CSS
-├── scanner/            # Lab tests and automated assessment/report code
-├── tools/              # Final report generator
-├── tests/              # Report and application tests
-├── reports/            # Findings and sanitized HTML/JSON outputs
-├── requirements.txt
-└── README.md
-```
+---
 
-## Security and limitations
-
-- **Never deploy this project publicly.** It intentionally includes SQL injection, XSS, CSRF, IDOR and authentication weaknesses.
-- Use synthetic accounts and local-only test data; keep Flask bound to `127.0.0.1`.
-- Do not commit `.env`, virtual environments, SQLite databases, secret keys, browser cookies, CSRF tokens, or raw proxy captures that contain session data.
-- Review and sanitize Nmap, Burp, and ZAP exports before publishing any evidence.
-- Lab severities are illustrative rather than independently calculated CVSS scores.
-- This project demonstrates VAPT methodology and controlled verification; it is **not** a production-ready security scanner or certification of another system's security.
-
-## Portfolio
-
-**Repository:** https://github.com/parijagitsss/VulnScope
-
-The project demonstrates Python web development, security test design, HTTP request analysis, authorization checks, remediation comparison, and reproducible technical reporting.
+**VulnScope — Learn, Assess, Remediate, Verify.**

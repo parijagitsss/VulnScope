@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Account Settings · VulnScope{% endblock %}
+{% block breadcrumb %}Account settings{% endblock %}
+{% block body %}
+<div class="page-heading"><div><div class="eyebrow">PERSONAL WORKSPACE</div><h1>Account settings</h1></div><span class="header-tag">MY ACCOUNT</span></div>
+<div class="settings-grid"><section class="panel"><div class="panel-top"><div><h3>Profile information</h3><p class="helper">This information is displayed across the workspace.</p></div></div><div class="profile-header"><span class="big-avatar">{{ current_user['display_name'][0]|upper }}</span><div><strong>{{ current_user['display_name'] }}</strong><small>{{ current_user['role'] }} · {{ current_user['department'] }}</small></div></div><form method="post" action="{{ url_for('settings') }}" class="form-stack settings-form">
+<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+<label for="name">Display name</label><input id="name" name="display_name" maxlength="60" value="{{ current_user['display_name'] }}" required><label>Email address</label><input value="{{ current_user['email'] }}" disabled><span class="form-hint">Email address cannot be changed here.</span><button class="btn primary" type="submit">Save changes →</button></form></section><aside class="panel info-panel"><div class="eyebrow">ACCOUNT DETAILS</div><h3>Your workspace identity</h3><div class="info-line"><span>Username</span><strong>@{{ current_user['username'] }}</strong></div><div class="info-line"><span>Department</span><strong>{{ current_user['department'] }}</strong></div><div class="info-line"><span>Access role</span><strong>{{ current_user['role'] }}</strong></div><div class="info-line"><span>Environment</span><strong>Local workspace</strong></div></aside></div>
+{% endblock %}

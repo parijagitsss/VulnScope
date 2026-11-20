@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} · VulnScope{% endblock %}
+{% block breadcrumb %}Error{% endblock %}
+{% block body %}<div class="error-page"><div class="error-number">{{ code }}</div><h1>{{ message }}</h1><p>{{ detail }}</p><a class="btn primary" href="{{ url_for('dashboard') if current_user else url_for('login') }}">Return to workspace →</a></div>{% endblock %}
+{% block login_body %}<div class="error-page public-error"><div class="error-number">{{ code }}</div><h1>{{ message }}</h1><p>{{ detail }}</p><a class="btn primary" href="{{ url_for('login') }}">Return to sign in →</a></div>{% endblock %}

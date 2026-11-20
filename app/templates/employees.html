@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}People Directory · VulnScope{% endblock %}
+{% block breadcrumb %}People directory{% endblock %}
+{% block body %}
+<div class="page-heading"><div><div class="eyebrow">PEOPLE & CULTURE</div><h1>People directory</h1><p>Find teammates, departments and contact information.</p></div><span class="header-tag">TEAM DIRECTORY</span></div>
+<div class="panel directory-panel"><div class="panel-top"><div><h3>Find an employee</h3><p class="helper">Look up a teammate using their username.</p></div><span class="count-label">{% if username %}{{ people|length }} results{% else %}Search to begin{% endif %}</span></div>
+<form method="get" action="{{ url_for('employees') }}" class="search-row"><label class="sr-only" for="username">Search by username</label><span class="magnifier">⌕</span><input type="text" id="username" name="username" value="{{ username }}" placeholder="Try alice, bob, priya..." maxlength="80"><button type="submit" class="btn primary">Search directory →</button>{% if username %}<a href="{{ url_for('employees') }}" class="btn subtle">Clear</a>{% endif %}</form>
+{% if username %}<div class="table-scroll"><table><thead><tr><th>Team member</th><th>Role</th><th>Department</th><th>Location</th><th>Contact</th></tr></thead><tbody>{% for person in people %}<tr data-employee-row><td><div class="person"><span class="person-avatar color-{{ loop.index0 % 5 }}">{{ person['name'][0] }}</span><span><strong>{{ person['name'] }}</strong><small>@{{ person['username'] }}</small></span></div></td><td>{{ person['title'] }}</td><td><span class="dept-pill">{{ person['department'] }}</span></td><td>{{ person['location'] }}</td><td><span class="table-email">{{ person['email'] }}</span></td></tr>{% else %}<tr><td colspan="5" class="empty">No employees matched your lookup.</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty directory-intro">Enter a username to search the company directory.</div>{% endif %}</div>
+<div class="below-tip"><span>ⓘ</span> Need help finding a colleague? Try searching by their account username.</div>
+{% endblock %}

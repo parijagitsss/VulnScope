@@ -1,33 +1,30 @@
-venv/
 .venv/
-__pycache__/
-.pytest_cache/
-*.pyc
-*.db
-.env
-reports/*.json
-reports/*.html
-
-# Python environment
 venv/
-.venv/
 __pycache__/
 *.pyc
-
-# Environment variables and secrets
 .env
 .env.*
 !.env.example
-
-# Local databases
 *.db
 *.sqlite
 *.sqlite3
-
-# Local security evidence
-reports/*-evidence.png
-reports/*-evidence.jpg
-
-# Development tools
-.vscode/
 .pytest_cache/
+.vscode/
+reports/tool_evidence/*.json
+reports/tool_evidence/*.xml
+reports/tool_evidence/burp/
+
+backups/
+reports/assessment.html
+reports/assessment.json
+
+# Raw VAPT evidence — review before publishing
+reports/evidence/before/
+reports/evidence/after/
+reports/evidence/tools/
+# Generated assessment reports
+reports/*.json
+reports/*.html
+
+# Raw local VAPT evidence
+reports/evidence/

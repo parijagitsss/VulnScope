@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Support Tickets · VulnScope{% endblock %}
+{% block breadcrumb %}Support tickets{% endblock %}
+{% block body %}
+<div class="page-heading"><div><div class="eyebrow">HELP & SUPPORT</div><h1>My support tickets</h1><p>Review requests you've submitted to the internal support team.</p></div><span class="header-tag">{{ tickets|length }} MY REQUESTS</span></div>
+<div class="panel"><div class="panel-top"><div><h3>Your requests</h3><p class="helper">Open a ticket to view its details and team discussion.</p></div></div>{% for ticket in tickets %}<a href="{{ url_for('ticket_detail',ticket_id=ticket['id']) }}" class="ticket-list-item"><span class="ticket-big-icon">▤</span><span class="ticket-main"><strong>{{ ticket['subject'] }}</strong><small>#{{ ticket['id'] }} · {{ ticket['category'] }} · Updated {{ ticket['updated'] }}</small></span><span class="status {{ ticket['status']|lower|replace(' ','-') }}">{{ ticket['status'] }}</span><span class="chevron">›</span></a>{% else %}<div class="empty">No tickets found for your account.</div>{% endfor %}</div>
+
+{% endblock %}

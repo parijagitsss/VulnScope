@@ -1,1 +1,26 @@
-{% extends 'base.html' %}{% block title %}Login | VulnScope{% endblock %}{% block content %}<section class="auth panel"><div class="eyebrow">SECURITY ASSESSMENT PLATFORM</div><h1>Welcome to VulnScope</h1><p>Sign in to your local training workspace.</p><form method="post"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><label>Username<input name="username" autocomplete="username" required></label><label>Password<input type="password" name="password" autocomplete="current-password" required></label><button class="primary">Sign in</button></form><p class="hint">Demo: admin / admin123 or analyst / analyst123</p></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Sign in · VulnScope Portal{% endblock %}
+{% block login_body %}
+<div class="login-layout">
+  <section class="login-story">
+    <a class="brand large" href="{{ url_for('login') }}"><span class="brand-mark">◈</span><span>vuln<span class="brand-accent">scope</span><small>WORKSPACE</small></span></a>
+    <div class="story-center"><div class="eyebrow"><span class="pulse-dot"></span> INTERNAL WORKSPACE</div><h1>Everything your team needs, <em>in one place.</em></h1><p>A unified workspace to connect people, resolve support requests, and keep your team moving forward.</p><div class="story-points"><span>◉ &nbsp; Team directory</span><span>◉ &nbsp; Support desk</span><span>◉ &nbsp; Account management</span></div></div>
+    <div class="story-bottom">VulnScope is a fictional company portal designed for authorized local security training.</div>
+  </section>
+  <section class="login-form-wrap"><div class="login-box">
+    <div class="welcome-icon">◇</div><div class="eyebrow">WELCOME BACK</div><h2>Sign in to your workspace</h2>
+<p class="muted">Enter your employee credentials to continue.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+    <form method="post" action="{{ url_for('login') }}" class="form-stack">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <label for="username">Username</label><input id="username" name="username" autocomplete="username" required>
+      <label for="password">Password</label><input id="password" type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+      <button class="btn primary wide" type="submit">Continue to workspace <span>→</span></button>
+    </form>
+    
+<div class="login-footer">Authorized access only · VulnScope Employee Workspace</div>
+
+  </div></section>
+</div>
+{% endblock %}

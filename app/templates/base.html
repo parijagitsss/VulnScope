@@ -1,3 +1,63 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{% block title %}VulnScope{% endblock %}</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
-<body><header><a class="brand" href="{{ url_for('index') }}">◈ VulnScope</a><span class="tag">LOCAL SECURITY LAB</span>{% if g.user %}<nav><a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('profile', user_id=g.user['id']) }}">My Profile</a><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><button class="linkbutton">Logout</button></form></nav>{% endif %}</header><main>{% for category, message in get_flashed_messages(with_categories=true) %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% block content %}{% endblock %}</main><footer>VulnScope • Educational testing on localhost only</footer></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}VulnScope Portal{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='portal.css') }}">
+  <script src="{{ url_for('static', filename='portal.js') }}" defer></script>
+</head>
+<body>
+  {% if current_user %}
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('dashboard') }}" aria-label="VulnScope Home"><span class="brand-mark">◈</span><span>vuln<span class="brand-accent">scope</span><small>WORKSPACE</small></span></a>
+      <div class="workspace-label">YOUR WORKSPACE</div> 
+      <nav class="side-nav" aria-label="Main navigation">
+        <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}"><span class="nav-icon">◫</span> Overview</a>
+        <a href="{{ url_for('employees') }}" class="{% if request.endpoint == 'employees' %}active{% endif %}"><span class="nav-icon">◎</span> People Directory</a>
+        <a href="{{ url_for('tickets') }}" class="{% if request.endpoint in ['tickets','ticket_detail','add_ticket_comment'] %}active{% endif %}"><span class="nav-icon">▤</span> Support Tickets</a>
+      
+      </nav>
+      <div class="side-bottom">
+        <div class="local-pill"><span class="pulse-dot"></span> EMPLOYEE WORKSPACE</div>
+        
+<a href="{{ url_for('settings') }}"
+   class="user-block"
+   aria-label="Open account settings"
+   title="Account settings">
+
+    <span class="avatar">
+        {{ current_user['display_name'][0] | upper }}
+    </span>
+
+    <div>
+        <strong>{{ current_user['display_name'] }}</strong>
+        <small>{{ current_user['role'] }}</small>
+    </div>
+
+</a>
+
+        <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><button class="logout" type="submit">↗ &nbsp; Sign out</button></form>
+      </div>
+    </aside>
+    <div class="main-content">
+      <header class="topbar"><button class="menu-toggle" type="button" aria-label="Toggle navigation">☰</button><span class="breadcrumb">VulnScope <span>/</span> {% block breadcrumb %}Workspace{% endblock %}</span>
+<div class="topbar-right">
+    <span class="status-dot"></span>
+    Workspace active
+</div>
+</header>
+      <main class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flashes">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+        {% block body %}{% endblock %}
+      </main>
+      <footer class="footer">© VulnScope Portal · Fictional organization · Authorized localhost testing only</footer>
+    </div>
+  </div>
+  {% else %}
+    {% block login_body %}{% endblock %}
+  {% endif %}
+</body>
+</html>
